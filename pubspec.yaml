@@ -30,12 +30,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  geolocator: ^10.1.0
+  permission_handler: ^10.2.0
+  http: ^0.13.3
+
+  # Other dependencies and configurations go here
+
 
   # Other dependencies go here
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
