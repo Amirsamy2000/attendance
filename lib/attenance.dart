@@ -137,7 +137,6 @@ class attenance extends StatelessWidget {
         // task taskvar = task();
         // taskvar.message;
         print('Attendance State: $data');
-
       } else {
         // If the server did not return a 200 OK response,
         // throw an exception.
