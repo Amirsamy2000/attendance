@@ -1,23 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class attenance extends StatefulWidget {
-  @override
-  _attenanceState createState() => _attenanceState();
-}
-
-class _attenanceState extends State<attenance> {
+class attenance extends StatelessWidget {
   double? latitude;
   double? longitude;
-  var ColIcon = Colors.white;
-  String text = "";
-  bool isIconChanged = false;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       body: Column(
         children: [
           Container(
@@ -35,26 +25,9 @@ class _attenanceState extends State<attenance> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                isIconChanged
-                    ? Icon(
-                  Icons.check_circle,
-                  size: 50,
-                  color: ColIcon,
-                )
-                    : Icon(
-                  Icons.error,
-                  size: 50,
-                  color: ColIcon,
-                ),
-                Text(text),
-                SizedBox(height: 50),
-                _buildButton(
-                  context,
-                  'Leave',
-                  Icons.logout,
-                  Colors.orange,
-                  0,
-                ),
+
+                SizedBox(height:50),
+                _buildButton(context, 'SUBMIT', Icons.beach_access, Colors.orange, 0),
               ],
             ),
           ),
@@ -62,14 +35,7 @@ class _attenanceState extends State<attenance> {
       ),
     );
   }
-
-  Widget _buildButton(
-      BuildContext context,
-      String label,
-      IconData iconData,
-      Color iconColor,
-      int na,
-      ) {
+  Widget _buildButton(BuildContext context, String label, IconData iconData, Color iconColor, int na) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: 100,
@@ -92,8 +58,6 @@ class _attenanceState extends State<attenance> {
           if (label == 'SUBMIT') {
             getLocation();
             getCurrentLocation();
-            // LocationModelApi locationData = LocationModelApi(longitude!, latitude!,  158);
-            // getAttendanceState(locationData);
           }
         },
         icon: Icon(
@@ -114,19 +78,11 @@ class _attenanceState extends State<attenance> {
       ),
     );
   }
-
   Future<void> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      print(
-          "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
-      LocationModelApi locationData =
-      LocationModelApi(position.longitude!, position.latitude!, 158);
-      var c = getAttendanceState(locationData);
-      print("==================================================");
-      print("==================================================");
+          desiredAccuracy: LocationAccuracy.high);
+     // print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -137,92 +93,13 @@ class _attenanceState extends State<attenance> {
 
     if (permission == LocationPermission.denied) {
       // Handle the case where the user denied access to location
-    } else if (permission == LocationPermission.whileInUse ||
-        permission == LocationPermission.always) {
+    } else if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
       // Access to location granted, now you can get the location
       Position position = await Geolocator.getCurrentPosition();
       latitude = position.latitude;
       longitude = position.longitude;
-      print(
-          "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+      print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
     }
   }
 
-  Future<void> getAttendanceState(LocationModelApi locationData) async {
-    final String baseUrl = "https://attendance-api.tbico.cloud/";
-    final String endpoint = "api/Employee/EmployeeAttendanceV2";
-
-    try {
-      final Uri uri = Uri.parse('$baseUrl$endpoint');
-
-      // Convert the LocationModelApi object to a map
-      final Map<String, dynamic> locationMap = locationData.toMap();
-
-      final response = await http.post(
-        uri,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        // Convert the location data to JSON and include it in the request body
-        body: jsonEncode(locationMap),
-      );
-
-      if (response.statusCode == 200) {
-        // If the server returns a 200 OK response, parse the JSON
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        // task taskvar = task();
-        // taskvar.message;
-        print('Attendance State: $data');
-
-        // Update the UI based on the response
-        setState(() {
-
-          text=data['message'];
-          if(data['State']==200){
-            ColIcon=Colors.green;
-            isIconChanged = true;
-          }
-          else{
-            isIconChanged = false;
-            ColIcon=Colors.red;
-
-          }
-
-
-        });
-      } else {
-        // If the server did not return a 200 OK response,
-        // throw an exception.
-        print(
-            'Failed to get attendance state. Status code: ${response.statusCode}');
-        // Update the UI based on the response
-        setState(() {
-          isIconChanged = false;
-        });
-      }
-    } catch (error) {
-      // Handle any errors
-      print('Error: $error');
-      // Update the UI based on the response
-      setState(() {
-        isIconChanged = false;
-      });
-    }
-  }
-}
-
-class LocationModelApi {
-  double longitude;
-  double latitude;
-  int someOtherData;
-
-  LocationModelApi(this.longitude, this.latitude, this.someOtherData);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'longitude': longitude,
-      'latitude': latitude,
-      'someOtherData': someOtherData,
-    };
-  }
 }
