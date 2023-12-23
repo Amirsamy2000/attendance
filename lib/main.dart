@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -5,8 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'HRAcount.dart';
+import 'LoginModel.dart';
 import 'attenance.dart';
-
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MaterialApp(home :MyApp()));
@@ -109,11 +111,12 @@ class MyApp extends StatelessWidget {
           print('Button pressed: $label');
           if (label == 'ATTENDANCE') {
             checkLocationPermission();
+            testAtt(context,158);
             // Navigate to the attenance screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => attenance()),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => attenance()),
+            // );
 
 
           } else if (label == 'HR ACCOUNT') {
@@ -164,6 +167,92 @@ class MyApp extends StatelessWidget {
       }
     }
   }
+
+  // Future<void> getAttendanceState(int id) async {
+  //   final String baseUrl = "https://attendance-api.tbico.cloud/";
+  //   final String endpoint = "api/Employee/GetAttendanceState";
+  //
+  //   try {
+  //     final Uri uri = Uri.parse('$baseUrl$endpoint');
+  //
+  //     // Convert the LocationModelApi object to a map
+  //     final Map<String, dynamic> locationMap = id as Map<String, dynamic>;
+  //
+  //     final response = await http.post(
+  //       uri,
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //       },
+  //       // Convert the location data to JSON and include it in the request body
+  //       body: jsonEncode(id),
+  //     );
+  //
+  //     if (response.statusCode == 1) {
+  //       // If the server returns a 200 OK response, parse the JSON
+  //       final Map<String, dynamic> data = jsonDecode(response.body);
+  //       // task taskvar = task();
+  //       // taskvar.message;
+  //       print('Attendance State1: $data');
+  //     }
+  //     else if (response.statusCode ==2){
+  //       // If the server returns a 200 OK response, parse the JSON
+  //       final Map<String, dynamic> data = jsonDecode(response.body);
+  //       // task taskvar = task();
+  //       // taskvar.message;
+  //       print('Attendance State2: $data');
+  //     }
+  //     else {
+  //       // If the server did not return a 200 OK response,
+  //       // throw an exception.
+  //       print('Failed to get attendance state. Status code: ${response.statusCode}');
+  //     }
+  //   } catch (error) {
+  //     print('Error: $error');
+  //   }
+  // }
+
+
+  Future<LoginModel> testAtt(BuildContext context,int employeeId) async {
+    final String baseUrl = "https://attendance-api.tbico.cloud/";
+    final String endpoint = "api/Employee/GetAttendanceState";
+
+    try {
+      final Uri uri = Uri.parse('$baseUrl$endpoint?EmployeeId=$employeeId');
+      final response = await http.get(uri, headers: {
+        // Add any headers if needed
+        'Content-Type': 'application/json',
+      });
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, parse the JSON
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        print('Attendance State: $data');
+        if(data['State']==1){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => attenance()),
+          );
+        }else{
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => attenance()),
+          );
+        }
+        return LoginModel.fromJson(data);
+      } else {
+        // If the server did not return a 200 OK response,
+        // throw an exception.
+        throw Exception('Failed to get attendance state. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error: $error');
+      throw error;
+    }
+  }
+
+
 }
 
 
