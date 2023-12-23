@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
                   SizedBox(height: 16),
                   _buildButton(context, 'HR ACCOUNT', Icons.access_time, Colors.green, 1),
                   SizedBox(height: 16),
-                  _buildButton(context, 'VACATIONS', Icons.beach_access, Colors.orange, 2),
+                  _buildButton(context, 'VACATIONS', Icons.home_filled, Colors.orange, 2),
                 ],
               ),
             ),
