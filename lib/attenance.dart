@@ -1,18 +1,25 @@
-import 'package:attendance/LocationModelApi.dart';
-import 'package:attendance/task.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:attendance/LoginModel.dart';
+import 'package:attendance/attenance.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
+class attenance extends StatefulWidget {
+  @override
+  _attenanceState createState() => _attenanceState();
+}
 
-class attenance extends StatelessWidget {
+class _attenanceState extends State<attenance> {
   double? latitude;
   double? longitude;
+  var ColIcon = Colors.white;
+  String text = "";
+  bool isIconChanged = false;
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           Container(
@@ -30,9 +37,26 @@ class attenance extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-                SizedBox(height:50),
-                _buildButton(context, 'SUBMIT', Icons.beach_access, Colors.orange, 0),
+                isIconChanged
+                    ? Icon(
+                  Icons.check_circle,
+                  size: 50,
+                  color: ColIcon,
+                )
+                    : Icon(
+                  Icons.error,
+                  size: 50,
+                  color: ColIcon,
+                ),
+                Text(text),
+                SizedBox(height: 50),
+                _buildButton(
+                  context,
+                  'Attend',
+                  Icons.login,
+                  Colors.orange,
+                  0,
+                ),
               ],
             ),
           ),
@@ -40,7 +64,14 @@ class attenance extends StatelessWidget {
       ),
     );
   }
-  Widget _buildButton(BuildContext context, String label, IconData iconData, Color iconColor, int na) {
+
+  Widget _buildButton(
+      BuildContext context,
+      String label,
+      IconData iconData,
+      Color iconColor,
+      int na,
+      ) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: 100,
@@ -57,16 +88,17 @@ class attenance extends StatelessWidget {
         ],
       ),
       child: ElevatedButton.icon(
-        onPressed: () {
+        onPressed: ()  {
           // Check the label to determine which action to perform
           print('Button pressed: $label');
-          if (label == 'SUBMIT') {
 
+          if (label == 'Attend') {
             getLocation();
             getCurrentLocation();
             // LocationModelApi locationData = LocationModelApi(longitude!, latitude!,  158);
             // getAttendanceState(locationData);
           }
+
         },
         icon: Icon(
           iconData,
@@ -86,13 +118,19 @@ class attenance extends StatelessWidget {
       ),
     );
   }
+
   Future<void> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
-      LocationModelApi locationData = LocationModelApi(position.longitude!, position.latitude!,  158);
-      getAttendanceState(locationData);
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      print(
+          "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+      LocationModelApi locationData =
+      LocationModelApi(position.longitude!, position.latitude!, 158);
+      var c = getLeavingState(locationData);
+      print("==================================================");
+      print("==================================================");
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -103,16 +141,18 @@ class attenance extends StatelessWidget {
 
     if (permission == LocationPermission.denied) {
       // Handle the case where the user denied access to location
-    } else if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+    } else if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
       // Access to location granted, now you can get the location
       Position position = await Geolocator.getCurrentPosition();
       latitude = position.latitude;
       longitude = position.longitude;
-      print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+      print(
+          "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
     }
   }
 
-  Future<void> getAttendanceState(LocationModelApi locationData) async {
+  Future<void> getLeavingState(LocationModelApi locationData) async {
     final String baseUrl = "https://attendance-api.tbico.cloud/";
     final String endpoint = "api/Employee/EmployeeAttendanceV2";
 
@@ -137,13 +177,56 @@ class attenance extends StatelessWidget {
         // task taskvar = task();
         // taskvar.message;
         print('Attendance State: $data');
+
+        // Update the UI based on the response
+        setState(() {
+
+          text=data['message'];
+          if(data['State']==1){
+            ColIcon=Colors.green;
+            isIconChanged = true;
+          }
+          else{
+            isIconChanged = false;
+            ColIcon=Colors.red;
+
+          }
+
+
+        });
       } else {
         // If the server did not return a 200 OK response,
         // throw an exception.
-        print('Failed to get attendance state. Status code: ${response.statusCode}');
+        print(
+            'Failed to get attendance state. Status code: ${response.statusCode}');
+        // Update the UI based on the response
+        setState(() {
+          isIconChanged = false;
+        });
       }
     } catch (error) {
+      // Handle any errors
       print('Error: $error');
+      // Update the UI based on the response
+      setState(() {
+        isIconChanged = false;
+      });
     }
+  }
+}
+
+class LocationModelApi {
+  double longitude;
+  double latitude;
+  int id;
+
+  LocationModelApi(this.longitude, this.latitude, this.id);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'longitude': longitude,
+      'latitude': latitude,
+      'id': id,
+    };
   }
 }
