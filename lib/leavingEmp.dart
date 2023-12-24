@@ -3,12 +3,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class attenance extends StatefulWidget {
+class LeavingH extends StatefulWidget {
   @override
-  _attenanceState createState() => _attenanceState();
+  _LeavingHState createState() => _LeavingHState();
 }
 
-class _attenanceState extends State<attenance> {
+class _LeavingHState extends State<LeavingH> {
   double? latitude;
   double? longitude;
   var ColIcon = Colors.white;
