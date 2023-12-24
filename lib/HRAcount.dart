@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class HRAccount extends StatelessWidget {
+import 'InFoModel.dart';
+
+class HRAccount extends StatefulWidget {
+
+  @override
+  _HRAccountState createState() => _HRAccountState();
+}
+
+class _HRAccountState extends State<HRAccount> {
+  void initState() {
+    super.initState();
+    getInfo(158);
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -75,6 +89,33 @@ class HRAccount extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<InFoModel?> getInfo(int x) async {
+    final String baseUrl = "https://attendance-api.tbico.cloud/";
+    final String endpoint = "api/Employee/GetEmployeeInfo";
+
+    try {
+      final Uri uri = Uri.parse('$baseUrl$endpoint');
+      final int requestBody =  x  ; // Adjust the payload accordingly
+
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        print('HR State: $data');
+        return InFoModel.fromJson(data); // Adjust the decoding logic based on your InFoModel class
+      } else {
+        throw Exception('Failed to get employee info. Status code: ${response.body}');
+      }
+    } catch (error) {
+      print('Error: $error');
+      throw error;
+    }
   }
 }
 
