@@ -50,7 +50,7 @@ class _attenanceState extends State<attenance> {
                 SizedBox(height: 50),
                 _buildButton(
                   context,
-                  'Leave',
+                  'Attend',
                   Icons.logout,
                   Colors.orange,
                   0,
@@ -89,7 +89,7 @@ class _attenanceState extends State<attenance> {
         onPressed: () {
           // Check the label to determine which action to perform
           print('Button pressed: $label');
-          if (label == 'SUBMIT') {
+          if (label == 'Attend') {
             getLocation();
             getCurrentLocation();
             // LocationModelApi locationData = LocationModelApi(longitude!, latitude!,  158);
@@ -123,7 +123,7 @@ class _attenanceState extends State<attenance> {
       print(
           "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
       LocationModelApi locationData =
-      LocationModelApi(position.longitude!, position.latitude!, 158);
+      LocationModelApi(position.longitude!,position.latitude, 158);
       var c = getAttendanceState(locationData);
       print("==================================================");
       print("==================================================");
@@ -214,15 +214,15 @@ class _attenanceState extends State<attenance> {
 class LocationModelApi {
   double longitude;
   double latitude;
-  int someOtherData;
+  int id;
 
-  LocationModelApi(this.longitude, this.latitude, this.someOtherData);
+  LocationModelApi(this.longitude, this.latitude, this.id);
 
   Map<String, dynamic> toMap() {
     return {
       'longitude': longitude,
       'latitude': latitude,
-      'someOtherData': someOtherData,
+      'id': id,
     };
   }
 }

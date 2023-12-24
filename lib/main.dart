@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:attendance/leavingEmp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -236,7 +237,7 @@ class MyApp extends StatelessWidget {
         }else{
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => attenance()),
+            MaterialPageRoute(builder: (context) => LeavingH()),
           );
         }
         return LoginModel.fromJson(data);

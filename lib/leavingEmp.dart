@@ -1,3 +1,5 @@
+import 'package:attendance/LoginModel.dart';
+import 'package:attendance/attenance.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -86,14 +88,16 @@ class _LeavingHState extends State<LeavingH> {
         ],
       ),
       child: ElevatedButton.icon(
-        onPressed: () {
+        onPressed: ()  {
           // Check the label to determine which action to perform
           print('Button pressed: $label');
 
+          if (label == 'Leave') {
             getLocation();
             getCurrentLocation();
             // LocationModelApi locationData = LocationModelApi(longitude!, latitude!,  158);
             // getAttendanceState(locationData);
+          }
 
         },
         icon: Icon(
@@ -124,7 +128,7 @@ class _LeavingHState extends State<LeavingH> {
           "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
       LocationModelApi locationData =
       LocationModelApi(position.longitude!, position.latitude!, 158);
-      var c = getAttendanceState(locationData);
+      var c = getLeavingState(locationData);
       print("==================================================");
       print("==================================================");
     } catch (e) {
@@ -148,9 +152,9 @@ class _LeavingHState extends State<LeavingH> {
     }
   }
 
-  Future<void> getAttendanceState(LocationModelApi locationData) async {
+  Future<void> getLeavingState(LocationModelApi locationData) async {
     final String baseUrl = "https://attendance-api.tbico.cloud/";
-    final String endpoint = "api/Employee/GetAttendanceState?EmployeeId=158";
+    final String endpoint = "api/Employee/EmployeeleavingTime";
 
     try {
       final Uri uri = Uri.parse('$baseUrl$endpoint');
@@ -158,20 +162,13 @@ class _LeavingHState extends State<LeavingH> {
       // Convert the LocationModelApi object to a map
       final Map<String, dynamic> locationMap = locationData.toMap();
 
-      // final response = await http.post(
-      //   uri,
-      //   headers: <String, String>{
-      //     'Content-Type': 'application/json; charset=UTF-8',
-      //   },
-      //   // Convert the location data to JSON and include it in the request body
-      //   body: jsonEncode(locationMap),
-      // );
-      final response = await http.get(
-          uri,
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            // Add any additional headers if needed
-          },
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        // Convert the location data to JSON and include it in the request body
+        body: jsonEncode(locationMap),
       );
 
       if (response.statusCode == 200) {
@@ -185,7 +182,7 @@ class _LeavingHState extends State<LeavingH> {
         setState(() {
 
           text=data['message'];
-          if(data['State']==200){
+          if(data['State']==1){
             ColIcon=Colors.green;
             isIconChanged = true;
           }
@@ -221,15 +218,15 @@ class _LeavingHState extends State<LeavingH> {
 class LocationModelApi {
   double longitude;
   double latitude;
-  int someOtherData;
+  int id;
 
-  LocationModelApi(this.longitude, this.latitude, this.someOtherData);
+  LocationModelApi(this.longitude, this.latitude, this.id);
 
   Map<String, dynamic> toMap() {
     return {
       'longitude': longitude,
       'latitude': latitude,
-      'someOtherData': someOtherData,
+      'id': id,
     };
   }
 }
