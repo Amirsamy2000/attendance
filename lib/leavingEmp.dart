@@ -89,12 +89,12 @@ class _LeavingHState extends State<LeavingH> {
         onPressed: () {
           // Check the label to determine which action to perform
           print('Button pressed: $label');
-          if (label == 'SUBMIT') {
+
             getLocation();
             getCurrentLocation();
             // LocationModelApi locationData = LocationModelApi(longitude!, latitude!,  158);
             // getAttendanceState(locationData);
-          }
+
         },
         icon: Icon(
           iconData,
@@ -150,7 +150,7 @@ class _LeavingHState extends State<LeavingH> {
 
   Future<void> getAttendanceState(LocationModelApi locationData) async {
     final String baseUrl = "https://attendance-api.tbico.cloud/";
-    final String endpoint = "api/Employee/EmployeeAttendanceV2";
+    final String endpoint = "api/Employee/GetAttendanceState?EmployeeId=158";
 
     try {
       final Uri uri = Uri.parse('$baseUrl$endpoint');
@@ -158,13 +158,20 @@ class _LeavingHState extends State<LeavingH> {
       // Convert the LocationModelApi object to a map
       final Map<String, dynamic> locationMap = locationData.toMap();
 
-      final response = await http.post(
-        uri,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        // Convert the location data to JSON and include it in the request body
-        body: jsonEncode(locationMap),
+      // final response = await http.post(
+      //   uri,
+      //   headers: <String, String>{
+      //     'Content-Type': 'application/json; charset=UTF-8',
+      //   },
+      //   // Convert the location data to JSON and include it in the request body
+      //   body: jsonEncode(locationMap),
+      // );
+      final response = await http.get(
+          uri,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            // Add any additional headers if needed
+          },
       );
 
       if (response.statusCode == 200) {
