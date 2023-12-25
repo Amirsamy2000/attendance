@@ -11,6 +11,7 @@ class InFoModel {
     );
   }
 }
+
 class ProfileModel {
   String empId;
   String enEmpName;
@@ -18,50 +19,39 @@ class ProfileModel {
   String dateOfHiring;
   String endOfHiring;
   String employeeInsurance;
-  String countViolations;
-  String countDeductions;
-  String countAbsent;
-  String employeeSalary;
+  int countViolations;
+  int countDeductions;
+  int countAbsent;
+  double employeeSalary;
+  int employeeCompany;
 
   ProfileModel({
-    this.empId = '',
-    this.enEmpName = '',
-    this.aEmpName = '',
-    this.dateOfHiring = '',
-    this.endOfHiring = '',
-    this.employeeInsurance = '',
-    this.countViolations = '',
-    this.countDeductions = '',
-    this.countAbsent = '',
-    this.employeeSalary = '',
+    required this.empId,
+    required this.enEmpName,
+    required this.aEmpName,
+    required this.dateOfHiring,
+    required this.endOfHiring,
+    required this.employeeInsurance,
+    required this.countViolations,
+    required this.countDeductions,
+    required this.countAbsent,
+    required this.employeeSalary,
+    required this.employeeCompany,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel(
-      empId: json['EmpId'] as String,
+      empId: json['EmpId'].toString(),
       enEmpName: json['EnEmpName'] as String,
       aEmpName: json['AEmpName'] as String,
       dateOfHiring: json['DateOfHiring'] as String,
       endOfHiring: json['EndOfHiring'] as String,
       employeeInsurance: json['EmployeeInsrance'] as String,
-      countViolations: json['Countviolations'] as String,
-      countDeductions: json['CountDeductions'] as String,
-      countAbsent: json['CountAbsent'] as String,
-      employeeSalary: json['EmployeeSalary'] as String,
+      countViolations: json['Countviolations'] as int,
+      countDeductions: json['CountDeductions'] as int,
+      countAbsent: json['CountAbsent'] as int,
+      employeeSalary: json['EmployeeSalary'] as double,
+      employeeCompany: json['EmployeeCompany'] as int,
     );
-  }
-
-  // Method to update properties with data from API
-  void updateFromApi(Map<String, dynamic> json) {
-    empId = json['EmpId'] as String;
-    enEmpName = json['EnEmpName'] as String;
-    aEmpName = json['AEmpName'] as String;
-    dateOfHiring = json['DateOfHiring'] as String;
-    endOfHiring = json['EndOfHiring'] as String;
-    employeeInsurance = json['EmployeeInsrance'] as String;
-    countViolations = json['Countviolations'] as String;
-    countDeductions = json['CountDeductions'] as String;
-    countAbsent = json['CountAbsent'] as String;
-    employeeSalary = json['EmployeeSalary'] as String;
   }
 }
