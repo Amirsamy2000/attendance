@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:attendance/Login.dart';
 import 'package:attendance/leavingEmp.dart';
 import 'package:attendance/test.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'attenance.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(MaterialApp(home :MyApp()));
+  runApp(MaterialApp(home :Login()));
 }
 
 class MyApp extends StatelessWidget {
